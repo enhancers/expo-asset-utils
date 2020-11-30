@@ -1,14 +1,22 @@
-// @flow
-import { Image } from 'react-native';
-
-export function prefetch(url: string): any {
-  if (!Image.prefetch) throw new Error(`expo-asset-utils: Image.prefetch is not supported.`);
-  return Image.prefetch(url);
+Object.defineProperty(exports, '__esModule', { value: true });
+exports.prefetch = prefetch;
+exports.getSizeAsync = getSizeAsync;
+var _reactNative = require('react-native');
+function prefetch(url) {
+  if (!_reactNative.Image.prefetch)
+    throw new Error('expo-asset-utils: Image.prefetch is not supported.');
+  return _reactNative.Image.prefetch(url);
 }
-
-export function getSizeAsync(uri: string): Promise<{ width: number, height: number }> {
-  if (!Image.getSize) throw new Error(`expo-asset-utils: Image.getSize is not supported.`);
-  return new Promise((resolve, reject) =>
-    Image.getSize(uri, (width, height) => resolve({ width, height }), reject)
-  );
+function getSizeAsync(uri) {
+  if (!_reactNative.Image.getSize)
+    throw new Error('expo-asset-utils: Image.getSize is not supported.');
+  return new Promise(function(resolve, reject) {
+    return _reactNative.Image.getSize(
+      uri,
+      function(width, height) {
+        return resolve({ width: width, height: height });
+      },
+      reject
+    );
+  });
 }

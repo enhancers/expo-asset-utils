@@ -1,9 +1,9 @@
-// @flow
-export default function arrayFromObject(object: Object): Array {
-  let images = [];
-  Object.keys(object).map(key => {
-    let item = object[key];
-
+Object.defineProperty(exports, '__esModule', { value: true });
+exports.default = arrayFromObject;
+function arrayFromObject(object) {
+  var images = [];
+  Object.keys(object).map(function(key) {
+    var item = object[key];
     if (typeof item === 'object') {
       images = images.concat(arrayFromObject(item));
     } else {

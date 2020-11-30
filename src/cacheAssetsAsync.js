@@ -1,36 +1,49 @@
-// @flow
-import { Asset } from 'expo-asset';
-import { loadAsync } from 'expo-font';
-import { prefetch } from './ImageUtils';
-
-export type CacheOptions = {
-  images: Array,
-  files: Array,
-  fonts: Array,
-};
-
-export default function cacheAssetsAsync({
-  images = [],
-  files = [],
-  fonts = [],
-}: CacheOptions): Promise<Array> {
-  return Promise.all([...cacheImages(images), ...raw(files), ...cacheFonts(fonts)]);
+Object.defineProperty(exports, '__esModule', { value: true });
+exports.default = cacheAssetsAsync;
+var _expoAsset = require('expo-asset');
+var _expoFont = require('expo-font');
+var _ImageUtils = require('./ImageUtils');
+function _toConsumableArray(arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) {
+      arr2[i] = arr[i];
+    }
+    return arr2;
+  } else {
+    return Array.from(arr);
+  }
 }
-
-function raw(files: Array<number>): Array<Promise> {
-  return files.map(file => Asset.fromModule(file).downloadAsync());
+function cacheAssetsAsync(_ref) {
+  var _ref$images = _ref.images,
+    images = _ref$images === undefined ? [] : _ref$images,
+    _ref$files = _ref.files,
+    files = _ref$files === undefined ? [] : _ref$files,
+    _ref$fonts = _ref.fonts,
+    fonts = _ref$fonts === undefined ? [] : _ref$fonts;
+  return Promise.all(
+    [].concat(
+      _toConsumableArray(cacheImages(images)),
+      _toConsumableArray(raw(files)),
+      _toConsumableArray(cacheFonts(fonts))
+    )
+  );
 }
-
-function cacheImages(images: Array): Promise[] {
-  return images.map(image => {
+function raw(files) {
+  return files.map(function(file) {
+    return _expoAsset.Asset.fromModule(file).downloadAsync();
+  });
+}
+function cacheImages(images) {
+  return images.map(function(image) {
     if (typeof image === 'string') {
-      return prefetch(image);
+      return (0, _ImageUtils.prefetch)(image);
     } else {
-      return Asset.fromModule(image).downloadAsync();
+      return _expoAsset.Asset.fromModule(image).downloadAsync();
     }
   });
 }
-
-function cacheFonts(fonts: Array): Array<Promise> {
-  return fonts.map(font => loadAsync(font));
+function cacheFonts(fonts) {
+  return fonts.map(function(font) {
+    return (0, _expoFont.loadAsync)(font);
+  });
 }
