@@ -4,13 +4,13 @@ import { Platform } from '@unimodules/core';
 import filenameFromUri from './filenameFromUri';
 
 function isAssetLibraryUri(uri: string): boolean {
-  return (
-    uri.toLowerCase().startsWith('assets-library://') || uri.toLowerCase().startsWith('asset:/')
+  return ['assets-library://', 'asset:/', '/private/var/containers/bundle/application'].includes(
+    uri.toLowerCase()
   );
 }
 
-function isLocalUri(uri: string): boolean {
-  return uri.toLowerCase().startsWith('file://');
+function isRemoteUri(uri: string): boolean {
+  return /^https?:\/\//i.test(uri);
 }
 
 async function getHashAsync(uri: string): Promise<string> {
@@ -55,7 +55,13 @@ async function fileInfoAsync(url: ?string, name: string): Promise<ImageData> {
     });
     const hash = await getHashAsync(localUri);
     return { uri: localUri, name, hash };
-  } else if (isLocalUri(url)) {
+  } else if (isRemoteUri(url)) {
+    /// remote image: download first
+    const { uri, md5: hash } = await FileSystem.downloadAsync(url, localUri, {
+      md5: true,
+    });
+    return { uri, name, hash };
+  } else {
     /// local image: we just need the hash
     let file = await resolveLocalFileAsync({ uri: url, name });
     if (!file) {
@@ -64,16 +70,9 @@ async function fileInfoAsync(url: ?string, name: string): Promise<ImageData> {
         throw new Error(
           `expo-asset-utils: fileInfoAsync(): couldn't resolve md5 hash for local uri: ${url} or alternate: ${localUri}`
         );
-        return null;
       }
     }
     return file;
-  } else {
-    /// remote image: download first
-    const { uri, md5: hash } = await FileSystem.downloadAsync(url, localUri, {
-      md5: true,
-    });
-    return { uri, name, hash };
   }
 }
 export default fileInfoAsync;
